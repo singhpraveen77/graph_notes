@@ -40,3 +40,39 @@
         
         // Code here
     }
+
+
+    // dfs 
+
+
+    bool isvalid(vector<vector<int>>& adj,int node,vector<int> & color,int curr) {
+    color[node]=curr;
+
+    for(auto ele:adj[node]){
+        if(color[ele]==-1){
+            if(isvalid(adj,ele,color,!color[node])==false)
+                return false;
+        }
+        else if(color[ele]==color[node])
+            return false;
+    }
+
+    return true;
+    }
+
+
+
+    bool isBipartite(vector<vector<int>>& adj) {
+    
+    int V=adj.size();
+       
+    vector<int> color(V,-1);
+
+    for(int i=0;i<V;i++){
+        if(color[i]==-1){
+            if(!isvalid(adj,i,color,0))return false;
+        }
+    }
+       
+    return true;
+    }
