@@ -1,0 +1,44 @@
+Tarjan's Algorithm is a DFS-based algorithm used to find important properties of a graph, such as bridges, articulation points, and strongly connected components.
+
+The main idea is that during DFS, every node stores two values:
+
+Discovery time (disc): the time when the node is first visited.
+Lowest reachable time (low): the earliest discovered node that this node or its subtree can reach using DFS edges and at most one back edge.
+
+The low value tells us whether a subtree has an alternate path back to an ancestor.
+
+If a subtree cannot reach any ancestor, then the edge connecting it to its parent becomes critical. That's why for bridges we check:
+
+if (low[child] > disc[parent])
+
+If this condition is true, removing that edge disconnects the graph, so it is a bridge.
+
+Since every node and edge is processed only once, the time complexity is O(V + E).
+
+If the interviewer asks, "What is low[]?"
+
+You can say:
+
+Think of low[node] as the oldest ancestor that this node or any node in its subtree can reach without using its parent edge.
+
+If it can reach an older ancestor, then there is another path.
+If it cannot, then the parent edge is the only connection.
+
+If the interviewer asks, "Why do we need low[]?"
+
+Answer:
+
+During DFS, we need to know whether a child's subtree has another path back to the already visited part of the graph.
+
+low[] summarizes that information in one value.
+
+Without low[], we wouldn't know whether removing an edge disconnects the graph.
+
+One-line intuition (easy to remember)
+
+disc[] tells us when a node was discovered, and low[] tells us how far back its subtree can reach.
+
+30-second interview answer
+
+"Tarjan's Algorithm is a DFS-based technique that computes two arrays: disc[] and low[]. disc[] stores when each node was first visited, while low[] stores the earliest discovered node reachable from that node or its subtree. Using these two values, we can efficiently identify graph properties like bridges, articulation points, and strongly connected components in linear time, O(V + E). For the bridge problem, if low[child] > disc[parent], it means the child's subtree has no alternate path to the parent or its ancestors, so that edge is a bridge."
+

@@ -2,7 +2,7 @@
 // this is the algo to calculate the strongly connected components in the graph 
  basic logic:
 
- step one :
+step one :
     simplily just find the topological sort 
 step two:
     reverse  all the edges of the graph or  form a new adjreverse

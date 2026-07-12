@@ -1,0 +1,98 @@
+Articulation Point (Cut Vertex)
+Theory (Interview Version)
+
+An articulation point is a vertex whose removal increases the number of connected components in the graph.
+
+We use Tarjan's Algorithm (DFS) with two arrays:
+
+disc[node] → Time when the node is first visited.
+low[node] → Earliest discovered node reachable from this node or its subtree.
+Conditions
+1. Root node (parent == -1)
+
+If the root has more than one DFS child, it is an articulation point.
+
+parent == -1 && children > 1
+
+Reason:
+The root connects multiple DFS branches. Removing it disconnects those branches.
+
+2. Non-root node
+
+After DFS returns from a child:
+
+if (low[child] >= disc[node])
+
+then node is an articulation point.
+
+Reason:
+The child's subtree cannot reach any ancestor of node, so removing node disconnects that subtree.
+
+Time Complexity
+Time: O(V + E)
+Space: O(V + E)
+
+
+class Solution {
+public:
+    vector<int> disc, low;
+    vector<int> ap;
+    int timer = 0;
+
+    void dfs(int node, int parent, vector<int> adj[]) {
+
+        disc[node] = low[node] = timer++;
+        int children = 0;
+
+        for (int neigh : adj[node]) {
+
+            if (neigh == parent)
+                continue;
+
+            if (disc[neigh] == -1) {
+
+                children++;
+                dfs(neigh, node, adj);
+
+                low[node] = min(low[node], low[neigh]);
+
+                // Non-root articulation point
+                if (parent != -1 && low[neigh] >= disc[node])
+                    ap[node] = 1;
+            }
+            else {
+                // Back edge
+                low[node] = min(low[node], disc[neigh]);
+            }
+        }
+
+        // Root articulation point
+        if (parent == -1 && children > 1)
+            ap[node] = 1;
+    }
+
+    vector<int> articulationPoints(int V, vector<int> adj[]) {
+
+        disc.assign(V, -1);
+        low.assign(V, -1);
+        ap.assign(V, 0);
+
+        for (int i = 0; i < V; i++) {
+            if (disc[i] == -1)
+                dfs(i, -1, adj);
+        }
+
+        vector<int> ans;
+
+        //making it in sorted order 
+        for (int i = 0; i < V; i++) {
+            if (ap[i])
+                ans.push_back(i);
+        }
+
+        if (ans.empty())
+            return {-1};
+
+        return ans;
+    }
+};

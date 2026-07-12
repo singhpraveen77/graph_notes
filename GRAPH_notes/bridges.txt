@@ -1,0 +1,75 @@
+Tarjan's Algorithm is not just one algorithm. It is a family of DFS-based algorithms developed by Robert Tarjan that solve graph problems in O(V + E) time by maintaining two values during DFS:
+
+disc[] (discovery time)
+low[] (lowest reachable discovery time)
+
+Depending on the problem, the same idea is used differently.
+
+Problem	Tarjan is used for
+Critical Connections (LeetCode 1192)	Finding Bridges
+Articulation Points	Finding Cut Vertices
+Strongly Connected Components	Finding SCCs in directed graphs
+
+class Solution {
+public:
+    vector<vector<int>> graph;
+    vector<int> disc, low;
+    vector<vector<int>> ans;
+    int timer = 0;
+
+    void dfs(int node, int parent) {
+
+        // Discovery time and low value initially same
+        disc[node] = low[node] = timer++;
+
+        for (int neigh : graph[node]) {
+
+            // Ignore the edge to parent
+            if (neigh == parent)
+                continue;
+
+            // Case 1: Unvisited neighbor
+            if (disc[neigh] == -1) {
+
+                dfs(neigh, node);
+
+                // Update low after returning from DFS
+                low[node] = min(low[node], low[neigh]);
+
+                // Check if edge (node, neigh) is a bridge
+                if (low[neigh] > disc[node]) {
+                    ans.push_back({node, neigh});
+                }
+            }
+            // Case 2: Already visited neighbor (Back Edge)
+            else {
+
+                // Update low using discovery time
+                low[node] = min(low[node], disc[neigh]);
+            }
+        }
+    }
+
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+
+        graph.resize(n);
+
+        // Build graph
+        for (auto &edge : connections) {
+            graph[edge[0]].push_back(edge[1]);
+            graph[edge[1]].push_back(edge[0]);
+        }
+
+        disc.assign(n, -1);
+        low.assign(n, -1);
+
+        // DFS from every unvisited node
+        // (works even if graph is disconnected)
+        for (int i = 0; i < n; i++) {
+            if (disc[i] == -1)
+                dfs(i, -1);
+        }
+
+        return ans;
+    }
+};
